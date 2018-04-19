@@ -1,0 +1,159 @@
+就是说是用来指示 执行哪条指令的。
+
+　　由于在JVM中，多线程是通过线程轮流切换来获得CPU执行时间的，因此，在任一具体时刻，一个CPU的内核只会执行一条线程中的指令，因此，为了能够使得每个线程都在线程切换后能够恢复在切换之前的程序执行位置，每个线程都需要有自己独立的程序计数器，并且不能互相被干扰，否则就会影响到程序的正常执行次序。因此，可以这么说，程序计数器是每个线程所私有的。
+
+　　在JVM规范中规定，如果线程执行的是非native方法，则程序计数器中保存的是当前需要执行的指令的地址；如果线程执行的是native方法，则程序计数器中的值是undefined。
+
+　　由于程序计数器中存储的数据所占空间的大小不会随程序的执行而发生改变，因此，对于程序计数器是不会发生内存溢出现象(OutOfMemory)的。
+
+
+由于每个线程正在执行的方法可能不同，因此每个线程都会有一个自己的Java栈，互不干扰。
+
+本地方法栈与Java栈的作用和原理非常相似。区别只不过是Java栈是为执行Java方法服务的，而本地方法栈则是为执行本地方法（Native Method）服务的。在JVM规范中，并没有对本地方发展的具体实现方法以及数据结构作强制规定，虚拟机可以自由实现它。在HotSopt虚拟机中直接就把本地方法栈和Java栈合二为一。
+
+
+，在Java中，程序员基本不用去关心空间释放的问题，Java的垃圾回收机制会自动进行处理。因此这部分空间也是Java垃圾收集器管理的主要区域。另外，堆是被所有线程共享的，在JVM中只有一个堆。
+
+
+方法区在JVM中也是一个非常重要的区域，它与堆一样，是被线程共享的区域。在方法区中，存储了每个类的信息（包括类的名称、方法信息、字段信息）、静态变量、常量以及编译器编译后的代码等。
+
+　　在Class文件中除了类的字段、方法、接口等描述信息外，还有一项信息是常量池，用来存储编译期间生成的字面量和符号引用。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Java和C语言的区别在哪里？
+设计者联盟2016-08-16 14:24
+1.Java与C语言各自的优势
+C语言是面向过程的语言，执行效率高;Java是面向对象的语言，执行效率比C语言低。
+C语言最关键的是比Java多了指针，这也说明了Java的健壮性，还有Java的多线程机制使程序可以并行运行，Java程序多用于网络。
+C语言的安全性不如Java，C语言没有Java的垃圾回收机制，申请的空间要手动释放。
+Java的通用性好，可以跨平台直接移植，只要有安装Java虚拟机(JVM)就可以了。
+2.Java和C语言谁的通用性会比较好
+在速度上，C语言编写的程序要优于Java，因为Java必须运行在虚拟机的环境中，但是因为虚拟机，Java获得的平台无关性，而C语言的程序有可能需要重新修改编译才能实现平台的移植，
+另一方面，C语言比Java语言更“底层”，因此可以用C编写例如硬件的驱动，而Java却不行。Java和C语言还有个明显的不同就是C语言注重的是算法，但是Java却不一样，想用的时候导包就可以了。
+C语言的算法很重要，但是Java中的算法没有C语言那么复杂。打印的方法：C语言是printf("…….");而Java是System.out.print("……."),也可以用println，ln表示换行。
+Java程序中的基本数据类型(boolean,char,byte,short,int,long,float,double)，是对对象的引用;C语言也有许多种基本类型，还有struct,union,enum,数组和指针。
+在Java没有枚举、联合类型。Java采用Unicode字符集，C语言通常采用的是ASCII字符集，A—65,a—97。C语言的变量可以不进行初始化，但Java的变量要进行初始化。
+在C语言中，char类型占一个字节，在Java中char类型占2个字节。
+3Java和C语言各自的特征
+Java面向对象的特征主要有封装，继承，多态。类的继承关系是单一的、非多重的，一个子类只有一个父类，子类的父类又只有一个父类。C语言支持“运算符的重载”，这是它的一个很重要的多态特征，是数据抽象和泛型编程的利器。它允许直接对对象进行四则运算，正像基本数据类型那样Java不支持这种多态机制，也是为降低复杂性。
+Java可以支持方法重载和重写，所谓重载就是一个类具备多个相同属性行为;重写就是在继承关系中父类的行为在不同的子类上有不同的实现。在Java中比C语言多了一些修饰符，如访问修饰符Public(公共的)、Private(私有的)、Protected(受保护的)、默认。
+Java有super关键字，指代父类对象，通常被用于调用父类的构造方法或一般方法C语言则没有super关键字，两者都有this，指代当前对象。
+在Java中，除了static、final、private是静态绑定以外，所有方法一律按动态绑定处理。Java中可以将类组织起来用Package打包，而C语言没有。
+
+
+
+
+
+
+内存溢出 out of memory，是指程序在申请内存时，没有足够的内存空间供其使用，出现out of memory；比如申请了一个integer,但给它存了long才能存下的数，那就是内存溢出。
+
+内存泄露 memory leak，是指程序在申请内存后，无法释放已申请的内存空间，一次内存泄露危害可以忽略，但内存泄露堆积后果很严重，无论多少内存,迟早会被占光。
+
+memory leak会最终会导致out of memory！
+
+内存溢出就是你要求分配的内存超出了系统能给你的，系统不能满足需求，于是产生溢出。 
+
+    内存泄漏是指你向系统申请分配内存进行使用(new)，可是使用完了以后却不归还(delete)，结果你申请到的那块内存你自己也不能再访问（也许你把它的地址给弄丢了），而系统也不能再次将它分配给需要的程序。一个盘子用尽各种方法只能装4个果子，你装了5个，结果掉倒地上不能吃了。这就是溢出！比方说栈，栈满时再做进栈必定产生空间溢出，叫上溢，栈空时再做退栈也产生空间溢出，称为下溢。就是分配的内存不足以放下数据项序列,称为内存溢出. 
+
+   以发生的方式来分类，内存泄漏可以分为4类： 
+
+1. 常发性内存泄漏。发生内存泄漏的代码会被多次执行到，每次被执行的时候都会导致一块内存泄漏。 
+2. 偶发性内存泄漏。发生内存泄漏的代码只有在
+些特定环境或操作过程下才会发生。常发性和偶发性是相对的。对于特定的环境，偶发性的也许就变成了常发性的。所以测试环境和测试方法对检测内存泄漏至关重要。 
+3. 一次性内存泄漏。发生内存泄漏的代码只会被执行一次，或者由于算法上的缺陷，导致总会有一块仅且一块内存发生泄漏。比如，在类的构造函数中分配内存，在析构函数中却没有释放该内存，所以内存泄漏只会发生一次。 
+4. 隐式内存泄漏。程序在运行过程中不停的分配内存，但是直到结束的时候才释放内存。严格的说这里并没有发生内存泄漏，因为最终程序释放了所有申请的内存。但是对于一个服务器程序，需要运行几天，几周甚至几个月，不及时释放内存也可能导致最终耗尽系统的所有内存。所以，我们称这类内存泄漏为隐式内存泄漏。 
+
+
+
+
+
+
+
+
+
+web.xml用于存放项目的配置信息和初始化信息，web/inf这个目录是项目的私有内容，外部不能之际额访问，只能通过内部的服务器访问，webconcent下存放的是一些样式的信息，可以提供给用户直接进行访问
+
+
+
+servlet有两种配置的方式；基于配置文件和基于注解
+
+
+<servlet>   <servlet-mapping>
+servlet-name  servlet-class  url-pattern
+<load-on-startup>
+
+@webServlet(urlPattern={"/hello","/helo2"},initPaames={@wenInitParame(name="",value=""),@webInitParame(name="",value="")})
+
+
+http://localhost:8080/javaWEB/hello    访问的路径
+
+
+servletconfig   主要用于获取一些初始化参数
+servletconfig.getInitParameter("");
+
+Enumeration<String> keys=servletConfig.getInitParameterNames();
+while(keys.hasMoreElements){
+ String name=keys.nextElements();
+String val=servletConfig.getInitParmeter(name);
+resp.getOutPutStream().write(name+"   "+key);
+}
+
+
+
+同一个web应用共享一个servletcontext对象
+可以实现多个servlet之间的通信数据共享
+Servletcontext.setAttribute("",  );
+获取全局的web初始化参数
+
+全局初始化参数的配置
+<context-param>
+<param-name>
+<param-value>
+</context-param>
+获取servletcontext可以通过servletconfig和this.servlercontext
+
+
+实现转发和读取资源文件
+RequestDispatcher rd=servletContext.getRequestDispatcher("/hello");
+rd.forward(request,response);
+
+InputStream is=this.getServletContext.getResourceAsStream("/")
+
+
+
+JSP中获取当前时间
+
+	<%
+		Date date =new Date();
+		out.write(date.toLocaleString());
+	%>
+?Web服务器是如何调用并执行一个jsp页面的？
+Tomcat把jsp页面翻译为.java文件  这个.java 文件实际上就是一个servlet
+
+
+?Jsp页面中的html排版标签是如何被发送到客户端的？
+调用servlet的service方法 通过jspwriter对象的writer方法直接写出到页面中
+
+
+脚本表达式和脚本片段
+后面不能跟；   必须严格遵循java语法规范
+单个可以是不完整的，但是多个一定要是完整的
+
+JSP的指令
+
+jsp标签

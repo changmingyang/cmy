@@ -1,0 +1,164 @@
+-- T_CLASS 建表代码：
+-- Create table
+create table T_CLASS
+(
+  CLASSID   NUMBER not null,
+  CLASSNO   VARCHAR2(20) not null,
+  CLASSNAME VARCHAR2(40) not null
+);
+-- Add comments to the table 
+comment on table T_CLASS is '班级表';
+
+-- Add comments to the columns 
+comment on column T_CLASS.CLASSID is '主键ID';
+comment on column T_CLASS.CLASSNO is '班级编号';
+comment on column T_CLASS.CLASSNAME is '班级名称';
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table T_CLASS add constraint PK_T_CLASS_CLASSID primary key (CLASSID);
+
+-- 序列创建代码：
+create sequence t_class_seq minvalue 0 start with 0 increment by 1;
+
+-- 数据插入代码：
+insert into t_class values (t_class_seq.nextval,'1057','JAVA一班');
+insert into t_class values (t_class_seq.nextval,'1058','JAVA二班');
+insert into t_class values (t_class_seq.nextval,'1059','JAVA三班');
+commit;
+
+
+-- T_TEACHER 建表代码：
+-- Create table
+create table T_TEACHER
+(
+  TEACHERID      NUMBER not null,
+  TEACHERNAME    VARCHAR2(40) not null,
+  TEACHERSEX     VARCHAR2(2) not null,
+  TEACHERSUBJECT VARCHAR2(20) not null,
+  TEACHERMONEY   NUMBER(6,1) not null,
+  TEACHERBONUS   NUMBER not null
+);
+
+-- Add comments to the table 
+comment on table T_TEACHER is '教师表';
+
+-- Add comments to the columns 
+comment on column T_TEACHER.TEACHERID is '主键ID';
+comment on column T_TEACHER.TEACHERNAME is '教师姓名';
+comment on column T_TEACHER.TEACHERSEX is '教师性别';
+comment on column T_TEACHER.TEACHERSUBJECT is '授课科目';
+comment on column T_TEACHER.TEACHERMONEY is '授课工资';
+comment on column T_TEACHER.TEACHERBONUS is '教师奖金';
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table T_TEACHER add constraint PK_T_TEACHER_TEACHERID primary key (TEACHERID);
+
+-- Create/Recreate check constraints 
+alter table T_TEACHER add constraint CK_T_TEACHER_TEACHERSEX check (TEACHERSEX='男' or TEACHERSEX='女');
+
+-- 序列创建代码：
+create sequence t_teacher_seq minvalue 0 start with 0 increment by 1;
+
+-- T_TEACHER 数据代码：
+insert into t_teacher values (t_teacher_seq.nextval,'刘德华','男','音乐',3000,1200);
+insert into t_teacher values (t_teacher_seq.nextval,'张学友','男','数学',3500,900);
+insert into t_teacher values (t_teacher_seq.nextval,'张学良','男','语文',3200,600);
+insert into t_teacher values (t_teacher_seq.nextval,'张惠妹','女','英语',2000,800);
+insert into t_teacher values (t_teacher_seq.nextval,'黎明','男','自然科学',4000,1000);
+commit;
+
+-- T_STUDENT 建表代码：
+
+-- Create table
+create table T_STUDENT
+(
+  STUDENTID   NUMBER not null,
+  STUDENTNO   VARCHAR2(20) not null,
+  STUDENTNAME VARCHAR2(40) not null,
+  STUDENTSEX  VARCHAR2(2) not null,
+  STUDENTSU   NUMBER(3,0),
+  STUDENTFK   NUMBER(5,2),
+  CLASSID     NUMBER not null
+);
+
+-- Add comments to the table 
+comment on table T_STUDENT is '学生表';
+
+-- Add comments to the columns 
+comment on column T_STUDENT.STUDENTID is '主键ID';
+comment on column T_STUDENT.STUDENTNO is '学生学号';
+comment on column T_STUDENT.STUDENTNAME is '学生姓名';
+comment on column T_STUDENT.STUDENTSEX is '学生性别';
+comment on column T_STUDENT.STUDENTSU is '学生成绩(null代表尚未考试。0代表缺考，-1代表作弊)';
+comment on column T_STUDENT.STUDENTFK is '学生(n饭卡ull代表尚未办卡。)';
+comment on column T_STUDENT.CLASSID is '班级外键';
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table T_STUDENT add constraint PK_T_STUDENT_STUDENTID primary key (STUDENTID);
+alter table T_STUDENT add constraint FK_T_STUDENT_CLASSID foreign key (CLASSID) references T_CLASS (CLASSID);
+
+-- Create/Recreate check constraints 
+alter table T_STUDENT add constraint CK_T_STUDENT_STUDENTSEX check (STUDENTSEX='男' or STUDENTSEX='女');
+alter table T_STUDENT add constraint CK_T_STUDENT_STUDENTSU check (STUDENTSU>-2 AND StudentSU <101);
+
+-- 序列创建代码：
+create sequence t_student_seq minvalue 0 start with 0 increment by 1;
+
+-- T_STUDENT 数据代码：
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1001','张三','男',85,11,1);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1011','李四','男',55,13,2);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1003','王五','男',-1,15,3);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1005','王小明','男',99,23,1);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1022','张小虎','男',56,2);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1033','李晓楠','女',77,44,2);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,CLASSID) values (t_student_seq.nextval,'1006','童逍遥','女',33,1);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1009','王宝强','男',0,66,2);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1062','刘松仁','男',0,66,3);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1035','李小龙','男',66,3);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1015','李小璐','女',76,66,3);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1023','王宗贤','男',-1,66,2);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,CLASSID) values (t_student_seq.nextval,'1024','张双波','男',-1,1);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1012','伍德','女',58,67,3);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1018','郑南','女',-1,44,1);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1064','金小哩','女',85,88,2);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1032','明道','男',54,78,1);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1045','马骁骁','女',0,88,1);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1011','萧楠','女',77,56,3);
+insert into t_student (STUDENTID,STUDENTNO,STUDENTNAME,STUDENTSEX,STUDENTSU,STUDENTFK,CLASSID) values (t_student_seq.nextval,'1029','李楠','男',100,56,3);
+commit;
+
+-- T_TEMP 建表代码：
+-- Create table
+create table T_TEMP
+(
+  TEMPID    NUMBER not null,
+  CLASSID   NUMBER not null,
+  TEACHERID NUMBER not null
+);
+
+-- Add comments to the table 
+comment on table T_TEMP is '中间表';
+
+-- Add comments to the columns 
+comment on column T_TEMP.TEMPID is '主键ID';
+comment on column T_TEMP.CLASSID is '班级表外键';
+comment on column T_TEMP.TEACHERID is '教师表的外键';
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table T_TEMP add constraint PK_T_TEMP_TEMPID primary key (TEMPID);
+alter table T_TEMP add constraint FK_T_TEMP_CLASSID foreign key (CLASSID) references T_CLASS (CLASSID);
+
+-- 序列创建代码：
+create sequence t_temp_seq minvalue 0 start with 0 increment by 1;
+
+-- T_TEMP 数据代码：
+insert into t_temp values (t_temp_seq.nextval,2,2);
+insert into t_temp values (t_temp_seq.nextval,2,3);
+insert into t_temp values (t_temp_seq.nextval,2,4);
+insert into t_temp values (t_temp_seq.nextval,1,2);
+insert into t_temp values (t_temp_seq.nextval,1,1);
+insert into t_temp values (t_temp_seq.nextval,1,5);
+insert into t_temp values (t_temp_seq.nextval,3,3);
+insert into t_temp values (t_temp_seq.nextval,3,2);
+insert into t_temp values (t_temp_seq.nextval,3,1);
+commit;

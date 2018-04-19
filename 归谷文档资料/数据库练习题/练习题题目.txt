@@ -1,0 +1,107 @@
+01.以下要求通过修改查询语句中的班级ID实现，计算出某一班级的所需补考人数（显示：人数）：
+
+select classid,count(*)
+from
+(select t_student.classId ,T_STUDENT.STUDENTNAME,t_student.studentsu
+from t_student
+where t_student.studentsu in(0,-1) or t_student.studentsu<60) t1
+group by classId
+
+02.以下要求通过修改查询语句中的班级编号实现，计算出某一班级的所需补考人数（显示：人数）：
+select classno,count(*) from
+(select classno,studentsu from
+(select tc.classno,ts.studentname ,ts.studentsu
+from t_class tc,t_student ts
+where tc.classid=ts.classid) t1
+where studentsu in(0,-1) or studentsu<60)    t2
+group by classno 
+03.以下要求通过修改查询语句中的班级编号实现，计算出某一班级的所需补考人数（显示：班级名称，补考人数，补考人姓名列表）。
+select em1.classname,em1.count,studentname,classno
+
+from
+
+(select classname,count(*) as count  from
+(select classname,classno,studentsu from
+(select tc.classno,tc.classname,ts.studentname ,ts.studentsu
+from t_class tc,t_student ts
+where tc.classid=ts.classid) t1
+where studentsu in(0,-1) or studentsu<60)    t2
+group by classname) em1,
+
+(select classname, classno ,studentname from
+(select tc.classno,tc.classname,ts.studentname ,ts.studentsu
+from t_class tc,t_student ts
+where tc.classid=ts.classid) t1
+where studentsu in(0,-1) or studentsu<60) em2
+
+where em1.classname=em2.classname
+
+
+04.以下要求通过修改查询语句中的班级编号实现，计算出某一班级的所需补考人数（显示：班级名称，补考类型，补考人数，补考人姓名列表）。
+        补考类型为：缺考，作弊，不及格。
+select em1.classname,em1.count,studentname,studentsu,classno
+from
+(select classname,count(*) as count from
+(select classname,classno,studentsu from
+(select tc.classno,tc.classname,ts.studentname ,ts.studentsu
+from t_class tc,t_student ts
+where tc.classid=ts.classid) t1
+where studentsu in(0,-1) or studentsu<60)    t2
+group by classname) em1,
+
+(select classname,studentname ,studentsu,classno from
+(select tc.classno,tc.classname,ts.studentname ,ts.studentsu
+from t_class tc,t_student ts
+where tc.classid=ts.classid) t1
+where studentsu in(0,-1) or studentsu<60) em2
+
+where em1.classname=em2.classname
+
+05.按下列格式显示查询结果：（班级ID，班级名称，缺考人数，缺考人列表，作弊人数，作弊人列表，不及格人数，不及格人列表）
+
+
+06.显示出每个班级的班级名称、班级最高分，最高分学生姓名列表。
+select classname,studentsu,studentname from
+(
+select tc.classname,ts.studentsu,ts.studentname,ts.studentid
+from t_class tc,t_student ts
+where tc.classid=ts.classid
+)
+where (classname,studentsu) in
+(select classname,max(studentsu) from
+(
+select tc.classname,ts.studentsu,ts.studentname,ts.studentid
+from t_class tc,t_student ts
+where tc.classid=ts.classid
+)
+group by classname)
+
+07.通过修改查询语句中的教师名称实现，显示出某一个老师的代课班级。（如张老师。显示：班级名称）
+select classname from
+(
+select tt.teachername,tc.classname
+from t_teacher tt,t_class tc,t_temp te
+where te.classid=tc.classid and tt.teacherid=te.teacherid 
+)
+where teachername='张学友'
+
+08.通过修改查询语句中的班级编号实现，显示出某一个班级的代课授课老师。（如计算机1班。显示：老师姓名，授课科目）
+
+select teachername,teachersubject ,classno from 
+(
+select tt.teachersubject,tt.teachername,tc.classname,tc.classno
+from t_class tc,t_temp te,t_teacher tt
+where tt.teacherid=te.teacherid and tc.classid=te.classid
+)
+where classno=1059
+09.通过修改查询语句中学生学号实现，显示出听某一个老师上课的全部学生。（如张老师。显示：班级名称，学生姓名）
+select teachername,classname,studentname from
+(
+select tt.teachername,tc.classname,ts.studentname,ts.studentno
+from t_class tc,t_student ts,t_teacher tt,t_temp te
+where ts.classid=te.classid and tt.teacherid=te.teacherid 
+) t1
+where
+
+10.通过修改查询语句中学生姓名实现，显示出听某一个老师上课的全部学生。（如张老师。显示：班级名称，学生姓名）
+
